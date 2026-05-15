@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MediaPulse — Documentation Technique</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --primary: #1e40af;
+    --primary-light: #3b82f6;
+    --accent: #0ea5e9;
+    --dark: #0f172a;
+    --gray: #64748b;
+    --light-gray: #f1f5f9;
+    --border: #e2e8f0;
+    --bronze: #b45309;
+    --silver: #475569;
+    --gold: #b45309;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    font-size: 11pt;
+    line-height: 1.65;
+    color: var(--dark);
+    background: white;
+  }
+
+  /* ── Page breaks ── */
+  @media print {
+    .page-break { page-break-before: always; }
+    .no-break    { page-break-inside: avoid; }
+    body { font-size: 10pt; }
+  }
+
+  /* ── Cover page ── */
+  .cover {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 60%, #0ea5e9 100%);
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 60px 40px;
+  }
+  .cover .logo {
+    font-size: 52pt;
+    font-weight: 700;
+    letter-spacing: -2px;
+    margin-bottom: 8px;
+  }
+  .cover .logo span { color: #38bdf8; }
+  .cover .subtitle {
+    font-size: 14pt;
+    font-weight: 300;
+    color: #bfdbfe;
+    max-width: 520px;
+    margin-bottom: 48px;
+  }
+  .cover .meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    max-width: 500px;
+    width: 100%;
+    margin-top: 32px;
+  }
+  .cover .meta-item {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 10px;
+    padding: 14px 16px;
+    text-align: left;
+  }
+  .cover .meta-item .label {
+    font-size: 8pt;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #93c5fd;
+    margin-bottom: 4px;
+  }
+  .cover .meta-item .value {
+    font-size: 11pt;
+    font-weight: 600;
+  }
+  .cover .badge {
+    background: rgba(59,130,246,0.3);
+    border: 1px solid rgba(96,165,250,0.5);
+    color: #93c5fd;
+    font-size: 8pt;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    border-radius: 20px;
+    margin-bottom: 24px;
+  }
+
+  /* ── Section layouts ── */
+  .section {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 40px;
+  }
+
+  h1 {
+    font-size: 22pt;
+    font-weight: 700;
+    color: var(--primary);
+    border-bottom: 3px solid var(--accent);
+    padding-bottom: 10px;
+    margin-bottom: 24px;
+  }
+  h2 {
+    font-size: 15pt;
+    font-weight: 600;
+    color: var(--dark);
+    margin: 28px 0 12px;
+  }
+  h3 {
+    font-size: 11pt;
+    font-weight: 600;
+    color: var(--primary);
+    margin: 20px 0 8px;
+  }
+  p { margin-bottom: 12px; }
+
+  /* ── Info boxes ── */
+  .info-box {
+    background: #eff6ff;
+    border-left: 4px solid var(--primary-light);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+  .warn-box {
+    background: #fefce8;
+    border-left: 4px solid #ca8a04;
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+
+  /* ── Tables ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 10pt;
+  }
+  th {
+    background: var(--primary);
+    color: white;
+    text-align: left;
+    padding: 10px 14px;
+    font-weight: 600;
+  }
+  td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: var(--light-gray); }
+  tr:last-child td { border-bottom: none; }
+
+  /* ── Code blocks ── */
+  pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+    font-size: 9pt;
+    padding: 18px 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 12px 0;
+    line-height: 1.5;
+  }
+  code {
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+    font-size: 9pt;
+    background: #e2e8f0;
+    color: #1e40af;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  /* ── Architecture diagram ── */
+  .arch-diagram {
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0;
+    background: #fafafa;
+  }
+  .arch-row {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+    margin-bottom: 8px;
+  }
+  .arch-layer {
+    flex: 1;
+    border-radius: 8px;
+    padding: 10px 12px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 9pt;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60px;
+  }
+  .arch-layer .icon { font-size: 16pt; margin-bottom: 4px; }
+  .arch-layer .name { font-size: 8pt; font-weight: 700; }
+  .arch-layer .tech { font-size: 7.5pt; font-weight: 400; color: rgba(0,0,0,0.6); margin-top: 2px; }
+
+  .layer-scraper   { background: #dbeafe; border: 2px solid #93c5fd; color: #1e40af; }
+  .layer-kafka     { background: #fef3c7; border: 2px solid #fbbf24; color: #92400e; }
+  .layer-minio     { background: #d1fae5; border: 2px solid #6ee7b7; color: #065f46; }
+  .layer-transform { background: #ede9fe; border: 2px solid #c4b5fd; color: #4c1d95; }
+  .layer-warehouse { background: #fee2e2; border: 2px solid #fca5a5; color: #991b1b; }
+  .layer-viz       { background: #fce7f3; border: 2px solid #f9a8d4; color: #9d174d; }
+  .layer-airflow   { background: #ecfdf5; border: 2px solid #6ee7b7; color: #064e3b; }
+  .layer-monitor   { background: #f0f9ff; border: 2px solid #7dd3fc; color: #0c4a6e; }
+  .layer-arrow {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18pt; color: var(--gray); min-width: 24px;
+  }
+  .arch-section-label {
+    font-size: 8pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gray);
+    margin: 12px 0 6px;
+    padding: 4px 8px;
+    background: var(--light-gray);
+    border-radius: 4px;
+    display: inline-block;
+  }
+
+  /* ── Data flow badges ── */
+  .flow-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin: 12px 0;
+    padding: 14px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .flow-step .step-num {
+    background: var(--primary);
+    color: white;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 10pt;
+    flex-shrink: 0;
+  }
+  .flow-step .step-content h4 { font-size: 10pt; font-weight: 600; margin-bottom: 4px; }
+  .flow-step .step-content p  { font-size: 9.5pt; color: var(--gray); margin: 0; }
+
+  /* ── Tech cards ── */
+  .tech-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 16px 0;
+  }
+  .tech-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .tech-card .tech-name {
+    font-weight: 700;
+    font-size: 11pt;
+    color: var(--primary);
+    margin-bottom: 4px;
+  }
+  .tech-card .tech-role {
+    font-size: 8.5pt;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .tech-card p { font-size: 9.5pt; color: var(--gray); margin: 0; }
+
+  /* ── Numbered list ── */
+  ol li, ul li {
+    margin-bottom: 6px;
+    font-size: 10.5pt;
+  }
+  ol { padding-left: 24px; }
+  ul { padding-left: 20px; list-style: disc; }
+
+  /* ── Deliverables checklist ── */
+  .check-list { list-style: none; padding: 0; }
+  .check-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 10.5pt;
+  }
+  .check-list li:last-child { border-bottom: none; }
+  .check-list .check { color: #16a34a; font-size: 13pt; flex-shrink: 0; }
+
+  /* ── ToC ── */
+  .toc-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 6px 0;
+    border-bottom: 1px dotted var(--border);
+    font-size: 10.5pt;
+  }
+  .toc-entry a { color: var(--dark); text-decoration: none; }
+  .toc-entry a:hover { color: var(--primary); }
+  .toc-num { color: var(--gray); font-size: 9pt; }
+  .toc-section { padding-left: 20px; font-size: 10pt; color: var(--gray); }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+
+  .tag {
+    display: inline-block;
+    background: var(--light-gray);
+    border: 1px solid var(--border);
+    color: var(--gray);
+    font-size: 8pt;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 20px;
+    margin: 2px;
+  }
+  .tag.green  { background: #dcfce7; border-color: #86efac; color: #166534; }
+  .tag.blue   { background: #dbeafe; border-color: #93c5fd; color: #1e40af; }
+  .tag.orange { background: #ffedd5; border-color: #fdba74; color: #9a3412; }
+  .tag.purple { background: #ede9fe; border-color: #c4b5fd; color: #4c1d95; }
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin: 20px 0;
+  }
+  .kpi-card {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .kpi-card .kpi-value {
+    font-size: 22pt;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .kpi-card .kpi-label {
+    font-size: 8pt;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.85;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ COVER ═══════════════════════════════════ -->
+<div class="cover">
+  <div class="badge">Architecture des Données — Rapport Technique</div>
+  <div class="logo">Media<span>Pulse</span></div>
+  <div class="subtitle">Plateforme d'Intelligence Médiatique pour l'Agrégation, le Traitement et la Visualisation d'Articles de Presse</div>
+
+  <div class="meta-grid">
+    <div class="meta-item">
+      <div class="label">Projet</div>
+      <div class="value">MediaPulse</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">Date</div>
+      <div class="value">Mai 2026</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">Auteur</div>
+      <div class="value">Ayoub Lafdaigui</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">Version</div>
+      <div class="value">1.0 — Production</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">Code Source</div>
+      <div class="value" style="font-size:9pt;">github.com/ayoublafdaigui/<br>architecture-project</div>
+    </div>
+    <div class="meta-item">
+      <div class="label">Stack</div>
+      <div class="value">Python · Kafka · MinIO · PostgreSQL</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ TABLE DES MATIÈRES ═══════════════════════════════════ -->
+<div class="section page-break">
+  <h1>Table des Matières</h1>
+
+  <div class="toc-entry"><a href="#context"><strong>1. Contexte et Objectifs du Projet</strong></a><span class="toc-num">3</span></div>
+  <div class="toc-entry toc-section"><a href="#context-media">1.1 Contexte médiatique marocain</a><span class="toc-num">3</span></div>
+  <div class="toc-entry toc-section"><a href="#context-objectifs">1.2 Objectifs techniques</a><span class="toc-num">3</span></div>
+
+  <div class="toc-entry"><a href="#architecture"><strong>2. Architecture du Système</strong></a><span class="toc-num">4</span></div>
+  <div class="toc-entry toc-section"><a href="#arch-overview">2.1 Vue d'ensemble</a><span class="toc-num">4</span></div>
+  <div class="toc-entry toc-section"><a href="#arch-layers">2.2 Couches de données (Medallion)</a><span class="toc-num">5</span></div>
+  <div class="toc-entry toc-section"><a href="#arch-flux">2.3 Flux de données de bout en bout</a><span class="toc-num">5</span></div>
+
+  <div class="toc-entry"><a href="#tech"><strong>3. Choix Technologiques</strong></a><span class="toc-num">6</span></div>
+  <div class="toc-entry toc-section"><a href="#tech-ingestion">3.1 Ingestion et streaming</a><span class="toc-num">6</span></div>
+  <div class="toc-entry toc-section"><a href="#tech-storage">3.2 Stockage des données</a><span class="toc-num">6</span></div>
+  <div class="toc-entry toc-section"><a href="#tech-pipeline">3.3 Pipeline de transformation</a><span class="toc-num">7</span></div>
+  <div class="toc-entry toc-section"><a href="#tech-orchestration">3.4 Orchestration et monitoring</a><span class="toc-num">7</span></div>
+
+  <div class="toc-entry"><a href="#deploy"><strong>4. Déploiement (Docker / Kubernetes)</strong></a><span class="toc-num">8</span></div>
+  <div class="toc-entry toc-section"><a href="#deploy-docker">4.1 Docker Compose</a><span class="toc-num">8</span></div>
+  <div class="toc-entry toc-section"><a href="#deploy-services">4.2 Inventaire des services</a><span class="toc-num">8</span></div>
+
+  <div class="toc-entry"><a href="#install"><strong>5. Documentation d'Installation et d'Utilisation</strong></a><span class="toc-num">9</span></div>
+  <div class="toc-entry toc-section"><a href="#install-pre">5.1 Prérequis</a><span class="toc-num">9</span></div>
+  <div class="toc-entry toc-section"><a href="#install-quick">5.2 Démarrage rapide</a><span class="toc-num">9</span></div>
+  <div class="toc-entry toc-section"><a href="#install-cli">5.3 CLI Opérateur</a><span class="toc-num">10</span></div>
+
+  <div class="toc-entry"><a href="#dashboard"><strong>6. Dashboards de Visualisation</strong></a><span class="toc-num">11</span></div>
+  <div class="toc-entry"><a href="#demo"><strong>7. Démonstration Fonctionnelle</strong></a><span class="toc-num">12</span></div>
+  <div class="toc-entry"><a href="#livrables"><strong>8. Récapitulatif des Livrables</strong></a><span class="toc-num">13</span></div>
+</div>
+
+<!-- ═══════════════════════════════════ 1. CONTEXTE ═══════════════════════════════════ -->
+<div class="section page-break" id="context">
+  <h1>1. Contexte et Objectifs du Projet</h1>
+
+  <h2 id="context-media">1.1 Contexte médiatique</h2>
+  <p>
+    Le paysage médiatique marocain est riche et fragmenté : des dizaines de sites d'information publient
+    chaque jour des centaines d'articles en arabe, français et anglais. À côté de ces sources locales,
+    les grandes chaînes internationales (Al Jazeera, BBC, CNN, Reuters) couvrent les mêmes événements
+    avec un regard extérieur.
+  </p>
+  <p>
+    Il n'existait pas jusqu'ici d'outil unifié permettant de <strong>collecter, normaliser, comparer et
+    visualiser</strong> cette information de manière automatisée et temps-réel.
+  </p>
+
+  <div class="info-box">
+    <strong>Problème résolu :</strong> un analyste qui veut savoir « quels sujets dominent l'actualité
+    marocaine cette semaine ? » devait visiter manuellement 8 sites, lire des articles en 3 langues et
+    consolider ses notes dans Excel. MediaPulse automatise tout ce processus en quelques minutes.
+  </div>
+
+  <h2 id="context-objectifs">1.2 Objectifs techniques</h2>
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-value">8</div>
+      <div class="kpi-label">Sources d'actualité</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">3</div>
+      <div class="kpi-label">Couches de données</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">5</div>
+      <div class="kpi-label">DAGs Airflow</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">12+</div>
+      <div class="kpi-label">Services Docker</div>
+    </div>
+  </div>
+
+  <table>
+    <thead><tr><th>Objectif</th><th>Critère de succès</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Collecte automatisée</strong></td><td>Scraper 8 sources sans intervention humaine, toutes les X heures via Airflow</td></tr>
+      <tr><td><strong>Streaming fiable</strong></td><td>Articles transmis via Kafka avec garantie de livraison, consumer écrit en Bronze MinIO</td></tr>
+      <tr><td><strong>Qualité des données</strong></td><td>Pipeline Bronze→Silver avec 6 règles de validation, rejet traçable des enregistrements invalides</td></tr>
+      <tr><td><strong>Agrégation analytique</strong></td><td>Couche Gold avec top-keywords, tendances quotidiennes, répartition géographique</td></tr>
+      <tr><td><strong>Entrepôt de données</strong></td><td>Schéma en étoile PostgreSQL (dim_source, dim_date, fact_articles, fact_keyword_frequency)</td></tr>
+      <tr><td><strong>Visualisation</strong></td><td>Dashboards Grafana provisionnés automatiquement ; métriques Prometheus en temps réel</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Sources couvertes</h3>
+  <table>
+    <thead><tr><th>Source</th><th>Pays</th><th>Langue</th><th>Type</th></tr></thead>
+    <tbody>
+      <tr><td>Hespress</td><td>🇲🇦 Maroc</td><td>Arabe</td><td>Nationale</td></tr>
+      <tr><td>Akhbarona</td><td>🇲🇦 Maroc</td><td>Arabe</td><td>Nationale</td></tr>
+      <tr><td>Barlamane</td><td>🇲🇦 Maroc</td><td>Arabe</td><td>Nationale</td></tr>
+      <tr><td>Lakom (Lakome2)</td><td>🇲🇦 Maroc</td><td>Arabe</td><td>Nationale</td></tr>
+      <tr><td>Al Jazeera</td><td>🇶🇦 Qatar</td><td>Anglais</td><td>Internationale</td></tr>
+      <tr><td>BBC News</td><td>🇬🇧 Royaume-Uni</td><td>Anglais</td><td>Internationale</td></tr>
+      <tr><td>CNN</td><td>🇺🇸 États-Unis</td><td>Anglais</td><td>Internationale</td></tr>
+      <tr><td>Reuters</td><td>🇬🇧 Royaume-Uni</td><td>Anglais</td><td>Internationale</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════ 2. ARCHITECTURE ═══════════════════════════════════ -->
+<div class="section page-break" id="architecture">
+  <h1>2. Architecture du Système</h1>
+
+  <h2 id="arch-overview">2.1 Vue d'ensemble — Schéma d'architecture</h2>
+
+  <div class="arch-diagram no-break">
+    <div class="arch-section-label">Sources externes</div>
+    <div class="arch-row">
+      <div class="arch-layer layer-scraper"><div class="icon">📰</div><div class="name">Hespress</div><div class="tech">MA · ar</div></div>
+      <div class="arch-layer layer-scraper"><div class="icon">📰</div><div class="name">Akhbarona</div><div class="tech">MA · ar</div></div>
+      <div class="arch-layer layer-scraper"><div class="icon">📰</div><div class="name">Barlamane / Lakom</div><div class="tech">MA · ar</div></div>
+      <div class="arch-layer layer-scraper"><div class="icon">🌐</div><div class="name">Al Jazeera / BBC / CNN / Reuters</div><div class="tech">INT · en</div></div>
+    </div>
+
+    <div style="text-align:center;font-size:18pt;color:#64748b;margin:4px 0;">↓</div>
+    <div class="arch-section-label">Couche d'Ingestion</div>
+    <div class="arch-row">
+      <div class="arch-layer layer-scraper" style="flex:2"><div class="icon">🕷️</div><div class="name">Scraper Service</div><div class="tech">Python · BeautifulSoup · Pydantic Article model</div></div>
+      <div class="arch-layer layer-kafka" style="flex:1"><div class="icon">📤</div><div class="name">Kafka Producer</div><div class="tech">topic: raw-articles</div></div>
+    </div>
+
+    <div style="text-align:center;font-size:18pt;color:#64748b;margin:4px 0;">↓</div>
+    <div class="arch-section-label">Couche Streaming</div>
+    <div class="arch-row">
+      <div class="arch-layer layer-kafka" style="flex:2"><div class="icon">⚡</div><div class="name">Apache Kafka</div><div class="tech">Confluent CP 7.6 · Zookeeper · topic raw-articles</div></div>
+      <div class="arch-layer layer-kafka" style="flex:1"><div class="icon">📥</div><div class="name">Kafka Consumer</div><div class="tech">micro-batch writer</div></div>
+    </div>
+
+    <div style="text-align:center;font-size:18pt;color:#64748b;margin:4px 0;">↓</div>
+    <div class="arch-section-label">Data Lake — Couche Bronze</div>
+    <div class="arch-row">
+      <div class="arch-layer layer-minio"><div class="icon">🪣</div><div class="name">MinIO Bronze</div><div class="tech">s3://mediapulse/bronze/source=X/date=YYYY-MM-DD/&lt;url_hash&gt;.json</div></div>
+    </div>
+
+    <div style="text-align:center;font-size:18pt;color:#64748b;margin:4px 0;">↓</div>
+    <div class="arch-section-label">Data Lake — Couche Silver (nettoyage &amp; validation)</div>
+    <div class="arch-row">
+      <div class="arch-layer layer-transform"><div class="icon">🔄</div><div class="name">Bronze → Silver Pipeline</div><div class="tech">HTML strip · Unicode normalization · langdetect · SHA-256 dedup · 6 règles qualité</div></div>
+      <div class="arch-layer layer-transform"><div class="icon">🗑️</div><div class="name">Rejected Records</div><div class="tech">silver/_rejected/ · QualityIssue traçable</div></div>
+    </div>
+
+    <div style="text-align:center;font-size:18pt;color:#64748b;margin:4px 0;">↓</div>
+    <div class="arch-section-label">Data Lake — Couche Gold (agrégation analytique)</div>
+    <div class="arch-row">
+      <div class="arch-layer layer-transform"><div class="icon">✨</div><div class="name">Silver → Gold Pipeline</div><div class="tech">top-keywords TF-IDF · daily trends · source-country counts · run_date partition</div></div>
+    </div>
+
+    <div style="text-align:center;font-size:18pt;color:#64748b;margin:4px 0;">↓</div>
+    <div class="arch-section-label">Entrepôt de Données</div>
+    <div class="arch-row">
+      <div class="arch-layer layer-warehouse"><div class="icon">🗄️</div><div class="name">PostgreSQL Warehouse</div><div class="tech">dim_source · dim_date · dim_category · fact_articles · fact_keyword_frequency · fact_daily_trends</div></div>
+    </div>
+
+    <div style="text-align:center;font-size:18pt;color:#64748b;margin:4px 0;">↓</div>
+    <div class="arch-section-label">Orchestration &amp; Monitoring</div>
+    <div class="arch-row">
+      <div class="arch-layer layer-airflow"><div class="icon">🌀</div><div class="name">Apache Airflow</div><div class="tech">5 DAGs · CeleryExecutor · Redis broker</div></div>
+      <div class="arch-layer layer-monitor"><div class="icon">📊</div><div class="name">Prometheus + Grafana</div><div class="tech">postgres-exporter · kafka-exporter · alerting</div></div>
+      <div class="arch-layer layer-viz"><div class="icon">📈</div><div class="name">Metabase</div><div class="tech">Self-service analytics</div></div>
+    </div>
+  </div>
+
+  <h2 id="arch-layers">2.2 Architecture Medallion — Trois couches de données</h2>
+
+  <table>
+    <thead><tr><th>Couche</th><th>Chemin MinIO</th><th>Format</th><th>Rôle</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><span class="tag orange">🥉 Bronze</span></td>
+        <td><code>bronze/source=X/date=YYYY-MM-DD/&lt;hash&gt;.json</code></td>
+        <td>JSON brut</td>
+        <td>Donnée telle que scrapée, immuable. Source de vérité.</td>
+      </tr>
+      <tr>
+        <td><span class="tag" style="background:#e2e8f0;color:#475569;">🥈 Silver</span></td>
+        <td><code>silver/source=X/date=YYYY-MM-DD/&lt;hash&gt;.json</code></td>
+        <td>JSON nettoyé</td>
+        <td>HTML strippé, encodage normalisé, langue détectée, dédupliqué.</td>
+      </tr>
+      <tr>
+        <td><span class="tag" style="background:#fef9c3;color:#78350f;">🥇 Gold</span></td>
+        <td><code>gold/table=X/run_date=YYYY-MM-DD/data.json</code></td>
+        <td>JSON agrégé</td>
+        <td>Top keywords (TF-IDF), tendances, comptages journaliers par source.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 id="arch-flux">2.3 Flux de données de bout en bout</h2>
+
+  <div class="flow-step no-break">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <h4>Scraping (batch ou streaming)</h4>
+      <p>Le <code>GenericArticleScraper</code> crawle les pages d'index de chaque source, identifie les URLs d'articles via regex, télécharge et parse le HTML avec BeautifulSoup. Chaque article est validé par le modèle Pydantic <code>Article</code> (titre, contenu, URL, langue, pays, timestamps).</p>
+    </div>
+  </div>
+  <div class="flow-step no-break">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <h4>Publication Kafka</h4>
+      <p>Le <code>KafkaProducer</code> sérialise l'article en JSON et le publie sur le topic <code>raw-articles</code>. En mode batch direct, le <code>BronzeWriter</code> écrit directement dans MinIO sans passer par Kafka.</p>
+    </div>
+  </div>
+  <div class="flow-step no-break">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <h4>Consommation et stockage Bronze</h4>
+      <p>Le <code>KafkaConsumer</code> lit les messages par micro-lots de 50, les persiste sous <code>bronze/source=X/date=D/&lt;url_hash&gt;.json</code> dans MinIO. Le chemin est partitionné par source et par date de publication.</p>
+    </div>
+  </div>
+  <div class="flow-step no-break">
+    <div class="step-num">4</div>
+    <div class="step-content">
+      <h4>Transformation Bronze → Silver</h4>
+      <p>Le pipeline nettoie les champs (strip HTML, NFKC Unicode, entités HTML), détecte la langue via <code>langdetect</code>, calcule un hash SHA-256 de l'URL pour la déduplication. Les records qui échouent à au moins une des 6 règles de validation sont rejetés vers <code>silver/_rejected/</code> avec la raison de rejet.</p>
+    </div>
+  </div>
+  <div class="flow-step no-break">
+    <div class="step-num">5</div>
+    <div class="step-content">
+      <h4>Agrégation Silver → Gold</h4>
+      <p>Lecture des fichiers Silver, tokenisation multi-langue (arabe + latin), calcul TF-IDF pour les top-50 keywords, agrégation des tendances quotidiennes par sujet, comptages par source et par pays. Résultats écrits en Gold partitionné par <code>run_date</code>.</p>
+    </div>
+  </div>
+  <div class="flow-step no-break">
+    <div class="step-num">6</div>
+    <div class="step-content">
+      <h4>Chargement Warehouse</h4>
+      <p>Le <code>WarehouseLoader</code> lit les fichiers Gold, résout les clés de dimension (upsert dans <code>dim_source</code>, <code>dim_date</code>, <code>dim_category</code>) puis insère les faits dans <code>fact_articles</code>, <code>fact_keyword_frequency</code>, <code>fact_daily_trends</code>.</p>
+    </div>
+  </div>
+  <div class="flow-step no-break">
+    <div class="step-num">7</div>
+    <div class="step-content">
+      <h4>Visualisation</h4>
+      <p>Grafana se connecte au warehouse PostgreSQL via le datasource provisionné automatiquement. Le dashboard <em>MediaPulse News Intelligence</em> affiche les comptes journaliers, la répartition linguistique, les top-keywords et le score de qualité en temps réel.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ 3. CHOIX TECHNOLOGIQUES ═══════════════════════════════════ -->
+<div class="section page-break" id="tech">
+  <h1>3. Choix Technologiques et Justifications</h1>
+
+  <h2 id="tech-ingestion">3.1 Ingestion et Streaming</h2>
+  <div class="tech-grid">
+    <div class="tech-card">
+      <div class="tech-name">Python 3.11</div>
+      <div class="tech-role">Langage principal</div>
+      <p>Riche écosystème web scraping (requests, BeautifulSoup, lxml), NLP (spaCy, langdetect), data (pandas). Typage strict avec Pydantic.</p>
+    </div>
+    <div class="tech-card">
+      <div class="tech-name">Apache Kafka (Confluent 7.6)</div>
+      <div class="tech-role">Bus de messages</div>
+      <p>Découplage producteur/consommateur, durabilité des messages, possibilité de replay. Indispensable pour un pipeline de scraping à haute fréquence. Topic <code>raw-articles</code> avec réplication factor 1 (dev).</p>
+    </div>
+    <div class="tech-card">
+      <div class="tech-name">Pydantic v2</div>
+      <div class="tech-role">Validation des données</div>
+      <p>Modèle <code>Article</code> avec validation stricte (URL, langues ISO 639-1, timestamps UTC). Rejet immédiat des données malformées dès l'ingestion.</p>
+    </div>
+    <div class="tech-card">
+      <div class="tech-name">BeautifulSoup4 + lxml</div>
+      <div class="tech-role">Parsing HTML</div>
+      <p>Parsing robuste des pages d'actualité. Sélection d'articles par patterns regex d'URL. Tolérant aux HTML malformés courants sur les sites d'information.</p>
+    </div>
+  </div>
+
+  <h2 id="tech-storage">3.2 Stockage des Données</h2>
+  <div class="tech-grid">
+    <div class="tech-card">
+      <div class="tech-name">MinIO</div>
+      <div class="tech-role">Data Lake (Bronze/Silver/Gold)</div>
+      <p>Compatible API S3, déployable on-premise. Stockage objet partitionné par <code>source</code> et <code>date</code> — permet un scan sélectif sans lire l'intégralité du lac. Remplace S3 AWS dans un contexte académique.</p>
+    </div>
+    <div class="tech-card">
+      <div class="tech-name">PostgreSQL 16</div>
+      <div class="tech-role">Entrepôt analytique</div>
+      <p>Schéma en étoile sous le namespace <code>warehouse</code>. Extensions <code>pgcrypto</code> pour les UUIDs. Vues SQL pré-calculées pour les dashboards (<code>daily_article_counts</code>, <code>language_distribution</code>, <code>data_quality_score</code>).</p>
+    </div>
+    <div class="tech-card">
+      <div class="tech-name">Redis</div>
+      <div class="tech-role">Broker Celery (Airflow)</div>
+      <p>Broker léger pour les tasks Airflow CeleryExecutor. Faible latence, simple à opérer en développement.</p>
+    </div>
+    <div class="tech-card">
+      <div class="tech-name">Architecture Medallion</div>
+      <div class="tech-role">Design pattern</div>
+      <p>Bronze (raw), Silver (curé), Gold (agrégé) — chaque couche est immuable et rejouable. Permet un debugging progressif et une traçabilité complète de la data lineage.</p>
+    </div>
+  </div>
+
+  <h2 id="tech-pipeline">3.3 Pipeline de Transformation</h2>
+  <div class="tech-grid">
+    <div class="tech-card">
+      <div class="tech-name">langdetect</div>
+      <div class="tech-role">Détection de langue</div>
+      <p>Détection automatique de l'arabe, anglais, français. Seed fixe (=0) pour la reproductibilité. Fallback sur le <code>language_hint</code> de la source en cas d'échec.</p>
+    </div>
+    <div class="tech-card">
+      <div class="tech-name">spaCy</div>
+      <div class="tech-role">NLP / tokenisation</div>
+      <p>Tokenisation multilingue pour l'extraction de keywords. Support du bloc Unicode arabe (U+0600-U+06FF). Calcul TF-IDF fait maison sur base de la fréquence brute.</p>
+    </div>
+    <div class="tech-card">
+      <div class="tech-name">pandas</div>
+      <div class="tech-role">Agrégation Gold</div>
+      <p>Lecture et agrégation des fichiers Silver JSON en DataFrames. Calcul des comptages journaliers, top-keywords, tendances par source.</p>
+    </div>
+    <div class="tech-card">
+      <div class="tech-name">python-dateutil</div>
+      <div class="tech-role">Normalisation temporelle</div>
+      <p>Parsing de dates dans tous formats (ISO, RFC, timestamps journaux). Conversion systématique en UTC pour la cohérence dans le warehouse.</p>
+    </div>
+  </div>
+
+  <h2 id="tech-orchestration">3.4 Orchestration, Visualisation et Monitoring</h2>
+  <div class="tech-grid">
+    <div class="tech-card">
+      <div class="tech-name">Apache Airflow 2.9.3</div>
+      <div class="tech-role">Orchestration</div>
+      <p>5 DAGs : scrape batch, Bronze→Silver, Silver→Gold, chargement warehouse, contrôle qualité. CeleryExecutor pour la scalabilité horizontale. DAGs versionnés avec le code source.</p>
+    </div>
+    <div class="tech-card">
+      <div class="tech-name">Grafana 11.1</div>
+      <div class="tech-role">Dashboards</div>
+      <p>Provisionnement automatique (datasource PostgreSQL + Prometheus). Dashboard <em>MediaPulse News Intelligence</em> défini en JSON, versionnée dans le repo.</p>
+    </div>
+    <div class="tech-card">
+      <div class="tech-name">Prometheus</div>
+      <div class="tech-role">Métriques système</div>
+      <p>Scrape le postgres-exporter (port 9187) et le kafka-exporter (port 9308). Règles d'alerte pour données périmées et chutes du score de qualité.</p>
+    </div>
+    <div class="tech-card">
+      <div class="tech-name">Metabase</div>
+      <div class="tech-role">Analytics self-service</div>
+      <p>Interface no-code pour explorer le warehouse PostgreSQL. Idéal pour les équipes métier non-techniques. Connecté à la même base que Grafana.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ 4. DÉPLOIEMENT ═══════════════════════════════════ -->
+<div class="section page-break" id="deploy">
+  <h1>4. Déploiement</h1>
+
+  <h2 id="deploy-docker">4.1 Docker Compose</h2>
+  <p>
+    L'intégralité du stack est containerisé. Le fichier <code>mediapulse/docker-compose.yml</code> définit
+    tous les services, réseaux et volumes. Les images applicatives (scraper, Airflow) sont construites
+    localement à partir de <code>Dockerfile</code> (Python 3.11-slim) et <code>Dockerfile.airflow</code>.
+  </p>
+
+  <pre># Démarrage complet du stack
+Copy-Item mediapulse\.env.example mediapulse\.env   # configurer les secrets
+cd mediapulse
+docker compose up --build
+
+# Mode demo (seed warehouse + Grafana prêt)
+docker compose --profile demo up --build demo-seed</pre>
+
+  <h2 id="deploy-services">4.2 Inventaire des services</h2>
+  <table>
+    <thead><tr><th>Service</th><th>Image</th><th>Port exposé</th><th>Rôle</th></tr></thead>
+    <tbody>
+      <tr><td><code>zookeeper</code></td><td>confluentinc/cp-zookeeper:7.6.1</td><td>2181</td><td>Coordination Kafka</td></tr>
+      <tr><td><code>kafka</code></td><td>confluentinc/cp-kafka:7.6.1</td><td>9092</td><td>Bus de messages</td></tr>
+      <tr><td><code>minio</code></td><td>minio/minio (2024-07)</td><td>9000, 9001</td><td>Data Lake S3-compatible</td></tr>
+      <tr><td><code>minio-init</code></td><td>minio/mc</td><td>—</td><td>Création du bucket au démarrage</td></tr>
+      <tr><td><code>postgres</code></td><td>postgres:16</td><td>5432</td><td>Warehouse analytique</td></tr>
+      <tr><td><code>redis</code></td><td>redis:7-alpine</td><td>6379</td><td>Broker Celery Airflow</td></tr>
+      <tr><td><code>airflow-init</code></td><td>mediapulse-airflow:latest</td><td>—</td><td>Migration DB + création admin</td></tr>
+      <tr><td><code>airflow-webserver</code></td><td>mediapulse-airflow:latest</td><td>8080</td><td>UI Airflow</td></tr>
+      <tr><td><code>airflow-scheduler</code></td><td>mediapulse-airflow:latest</td><td>—</td><td>Planification des DAGs</td></tr>
+      <tr><td><code>airflow-worker</code></td><td>mediapulse-airflow:latest</td><td>—</td><td>Exécution des tasks Celery</td></tr>
+      <tr><td><code>scraper</code></td><td>Dockerfile local</td><td>—</td><td>Service de scraping batch</td></tr>
+      <tr><td><code>stream-consumer</code></td><td>Dockerfile local</td><td>—</td><td>Consumer Kafka → Bronze</td></tr>
+      <tr><td><code>warehouse-migrate</code></td><td>Dockerfile local</td><td>—</td><td>Application du schéma SQL</td></tr>
+      <tr><td><code>metabase</code></td><td>metabase/metabase:v0.50.18</td><td>3000</td><td>Analytics self-service</td></tr>
+      <tr><td><code>prometheus</code></td><td>prom/prometheus:v2.53.1</td><td>9090</td><td>Collecte de métriques</td></tr>
+      <tr><td><code>postgres-exporter</code></td><td>prometheuscommunity/postgres-exporter</td><td>9187</td><td>Métriques PostgreSQL</td></tr>
+      <tr><td><code>kafka-exporter</code></td><td>danielqsj/kafka-exporter</td><td>9308</td><td>Métriques Kafka</td></tr>
+      <tr><td><code>grafana</code></td><td>grafana/grafana:11.1.0</td><td>3001</td><td>Dashboards de visualisation</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Réseau et volumes</h3>
+  <p>Tous les services partagent le réseau bridge <code>mediapulse-net</code>. Les volumes nommés
+  (<code>kafka-data</code>, <code>minio-data</code>, <code>postgres-data</code>, <code>grafana-data</code>, etc.)
+  assurent la persistance des données entre les redémarrages.</p>
+</div>
+
+<!-- ═══════════════════════════════════ 5. INSTALLATION ═══════════════════════════════════ -->
+<div class="section page-break" id="install">
+  <h1>5. Documentation d'Installation et d'Utilisation</h1>
+
+  <h2 id="install-pre">5.1 Prérequis</h2>
+  <table>
+    <thead><tr><th>Outil</th><th>Version minimale</th><th>Usage</th></tr></thead>
+    <tbody>
+      <tr><td>Docker Desktop</td><td>24+</td><td>Containerisation de tous les services</td></tr>
+      <tr><td>Docker Compose</td><td>v2.20+</td><td>Orchestration multi-services</td></tr>
+      <tr><td>Python</td><td>3.11+</td><td>Exécution CLI locale (optionnel)</td></tr>
+      <tr><td>Git</td><td>2.40+</td><td>Clonage du dépôt</td></tr>
+      <tr><td>RAM disponible</td><td>8 Go minimum</td><td>Stack complet (Kafka + Airflow + Postgres)</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="install-quick">5.2 Démarrage rapide (5 minutes)</h2>
+
+  <h3>Étape 1 — Cloner le dépôt</h3>
+  <pre>git clone https://github.com/ayoublafdaigui/architecture-project.git
+cd architecture-project</pre>
+
+  <h3>Étape 2 — Configurer l'environnement</h3>
+  <pre>Copy-Item mediapulse\.env.example mediapulse\.env
+# Éditer mediapulse\.env pour définir les mots de passe</pre>
+
+  <div class="warn-box">
+    <strong>Important :</strong> Ne pas committer le fichier <code>.env</code> — il est exclu par <code>.gitignore</code>.
+    Les valeurs par défaut fonctionnent pour le développement local.
+  </div>
+
+  <h3>Étape 3 — Démarrer le stack</h3>
+  <pre>cd mediapulse
+docker compose up --build</pre>
+  <p>Première exécution : ~5-10 min (téléchargement des images). Les démarrages suivants : ~60 secondes.</p>
+
+  <h3>Étape 4 — Vérifier les services</h3>
+  <table>
+    <thead><tr><th>Service</th><th>URL</th><th>Identifiants par défaut</th></tr></thead>
+    <tbody>
+      <tr><td>MinIO Console</td><td>http://localhost:9001</td><td><code>mediapulse_minio</code> / <code>.env</code></td></tr>
+      <tr><td>Airflow</td><td>http://localhost:8080</td><td><code>admin</code> / <code>admin</code></td></tr>
+      <tr><td>Metabase</td><td>http://localhost:3000</td><td>Wizard à la première connexion</td></tr>
+      <tr><td>Prometheus</td><td>http://localhost:9090</td><td>—</td></tr>
+      <tr><td>Grafana</td><td>http://localhost:3001</td><td><code>admin</code> / <code>.env GF_*</code></td></tr>
+      <tr><td>PostgreSQL</td><td>localhost:5432</td><td><code>mediapulse</code> / <code>.env</code></td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="install-cli">5.3 CLI Opérateur</h2>
+  <p>Depuis le répertoire parent <code>architecture-project/</code>, le CLI <code>python -m mediapulse</code>
+  offre toutes les commandes du pipeline :</p>
+
+  <pre># Diagnostic de connectivité (MinIO, Kafka, PostgreSQL)
+python -m mediapulse doctor
+
+# Appliquer le schéma warehouse (DDL)
+python -m mediapulse apply-schema
+
+# Scraper toutes les sources (batch)
+python -m mediapulse scrape
+
+# Scraper une source spécifique
+python -m mediapulse scrape --source hespress
+
+# Pipeline Bronze → Silver (toutes sources)
+python -m mediapulse bronze-to-silver
+
+# Pipeline Silver → Gold
+python -m mediapulse silver-to-gold
+
+# Charger le warehouse depuis Gold
+python -m mediapulse load-warehouse
+
+# Rapport de qualité
+python -m mediapulse quality --layer silver
+python -m mediapulse quality --layer gold
+
+# Seed de données de démonstration (14 jours)
+python -m mediapulse seed-demo --days 14 --articles-per-day 16</pre>
+
+  <h3>Exécution des tests</h3>
+  <pre>cd architecture-project
+python -m pytest mediapulse/tests/ -v</pre>
+
+  <table>
+    <thead><tr><th>Fichier de test</th><th>Ce qui est testé</th></tr></thead>
+    <tbody>
+      <tr><td><code>test_article_model.py</code></td><td>Validation Pydantic Article (title, URL, langue, timezone)</td></tr>
+      <tr><td><code>test_bronze_to_silver.py</code></td><td>Pipeline de nettoyage, règles qualité, déduplication URL</td></tr>
+      <tr><td><code>test_silver_to_gold.py</code></td><td>Agrégation TF-IDF, tendances, comptages Gold</td></tr>
+      <tr><td><code>test_demo_seed.py</code></td><td>Génération de données de démonstration cohérentes</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════ 6. DASHBOARDS ═══════════════════════════════════ -->
+<div class="section page-break" id="dashboard">
+  <h1>6. Dashboards de Visualisation</h1>
+
+  <h2>6.1 Grafana — MediaPulse News Intelligence</h2>
+  <p>
+    Le dashboard principal est <strong>provisionné automatiquement</strong> au démarrage de Grafana.
+    Il est défini dans <code>mediapulse/dashboard/grafana/provisioning/dashboards/mediapulse-overview.json</code>
+    et versionné dans Git — aucune configuration manuelle nécessaire.
+  </p>
+
+  <table>
+    <thead><tr><th>Panel</th><th>Source de données</th><th>Indicateur</th></tr></thead>
+    <tbody>
+      <tr><td>Articles par jour</td><td>Vue <code>warehouse.daily_article_counts</code></td><td>Évolution temporelle du volume d'articles par source</td></tr>
+      <tr><td>Répartition linguistique</td><td>Vue <code>warehouse.language_distribution</code></td><td>Proportion arabe / anglais / autres</td></tr>
+      <tr><td>Top Keywords</td><td><code>warehouse.fact_keyword_frequency</code></td><td>Mots-clés les plus fréquents du jour (TF-IDF)</td></tr>
+      <tr><td>Tendances du jour</td><td><code>warehouse.fact_daily_trends</code></td><td>Sujets trending avec score et comptage</td></tr>
+      <tr><td>Score de qualité</td><td>Vue <code>warehouse.data_quality_score</code></td><td>% de records passant les règles de validation par couche</td></tr>
+      <tr><td>Métriques Kafka</td><td>Prometheus kafka-exporter</td><td>Consumer lag, messages produits/consommés par minute</td></tr>
+      <tr><td>Métriques PostgreSQL</td><td>Prometheus postgres-exporter</td><td>Connexions actives, taille des tables, latence des requêtes</td></tr>
+    </tbody>
+  </table>
+
+  <h2>6.2 Alertes Prometheus</h2>
+  <p>Les règles d'alerte définies dans <code>dashboard/prometheus-alerts.yml</code> couvrent :</p>
+  <ul>
+    <li><strong>Données périmées :</strong> aucun nouvel article depuis &gt; 6 heures → alerte <code>StaleData</code></li>
+    <li><strong>Score qualité bas :</strong> taux de rejet Silver &gt; 20% → alerte <code>HighRejectionRate</code></li>
+    <li><strong>Consumer lag Kafka :</strong> lag &gt; 1000 messages → alerte <code>KafkaConsumerLag</code></li>
+    <li><strong>PostgreSQL indisponible :</strong> scrape echoue → alerte <code>PostgresDown</code></li>
+  </ul>
+
+  <h2>6.3 Metabase — Exploration self-service</h2>
+  <p>
+    Metabase (port 3000) se connecte à la même base PostgreSQL. Les équipes non-techniques peuvent
+    créer leurs propres questions et tableaux de bord sans écrire de SQL, en pointant directement
+    sur les tables du schéma <code>warehouse</code>.
+  </p>
+
+  <div class="info-box">
+    <strong>Accès rapide aux dashboards :</strong> après <code>docker compose up</code>, ouvrir
+    Grafana sur <strong>http://localhost:3001</strong> → dossier <em>MediaPulse</em> →
+    <em>MediaPulse News Intelligence</em>. Les données de démonstration sont disponibles via
+    <code>docker compose --profile demo up demo-seed</code>.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ 7. DÉMO FONCTIONNELLE ═══════════════════════════════════ -->
+<div class="section page-break" id="demo">
+  <h1>7. Démonstration Fonctionnelle du Pipeline de Bout en Bout</h1>
+
+  <h2>7.1 Scénario de démonstration</h2>
+  <p>
+    La démonstration ci-dessous montre le pipeline complet depuis le scraping jusqu'à la visualisation,
+    en environ 15 minutes avec les données de démonstration pré-générées.
+  </p>
+
+  <div class="flow-step no-break">
+    <div class="step-num">A</div>
+    <div class="step-content">
+      <h4>Démarrer le stack avec données de démonstration</h4>
+      <p><code>docker compose --profile demo up --build demo-seed</code><br>
+      Démarre tous les services et génère 14 jours × 16 articles par source dans le warehouse PostgreSQL.</p>
+    </div>
+  </div>
+
+  <div class="flow-step no-break">
+    <div class="step-num">B</div>
+    <div class="step-content">
+      <h4>Observer le scraping en temps réel</h4>
+      <p>Ouvrir Airflow sur http://localhost:8080 → activer le DAG <code>mediapulse_batch_scrape</code>
+      → déclencher manuellement. Suivre les logs en temps réel : scraping Hespress, Akhbarona, BBC, etc.</p>
+    </div>
+  </div>
+
+  <div class="flow-step no-break">
+    <div class="step-num">C</div>
+    <div class="step-content">
+      <h4>Vérifier le Bronze dans MinIO</h4>
+      <p>Ouvrir http://localhost:9001 → bucket <code>mediapulse</code> → naviguer dans <code>bronze/</code>
+      pour voir les articles JSON partitionnés par <code>source=X/date=YYYY-MM-DD/</code>.</p>
+    </div>
+  </div>
+
+  <div class="flow-step no-break">
+    <div class="step-num">D</div>
+    <div class="step-content">
+      <h4>Déclencher le pipeline Bronze → Silver → Gold</h4>
+      <p>Dans Airflow, déclencher successivement <code>mediapulse_bronze_to_silver</code> puis
+      <code>mediapulse_silver_to_gold</code>. Observer le décompte d'articles acceptés vs rejetés dans les logs.</p>
+    </div>
+  </div>
+
+  <div class="flow-step no-break">
+    <div class="step-num">E</div>
+    <div class="step-content">
+      <h4>Charger le warehouse et voir les dashboards</h4>
+      <p>Déclencher <code>mediapulse_load_warehouse</code>. Puis ouvrir Grafana (http://localhost:3001)
+      → dashboard <em>MediaPulse News Intelligence</em> : les graphiques se peuplent avec les données réelles scrapées.</p>
+    </div>
+  </div>
+
+  <h2>7.2 Règles de validation Silver démontrées</h2>
+  <table>
+    <thead><tr><th>Règle</th><th>Condition de rejet</th></tr></thead>
+    <tbody>
+      <tr><td><code>title_not_empty</code></td><td>Titre absent ou vide après nettoyage</td></tr>
+      <tr><td><code>published_at_not_null</code></td><td>Date de publication manquante ou non parseable</td></tr>
+      <tr><td><code>content_length_gt_100</code></td><td>Contenu ≤ 100 caractères (publicité, nav menu)</td></tr>
+      <tr><td><code>url_valid</code></td><td>URL sans scheme http/https ou sans domaine</td></tr>
+      <tr><td><code>url_hash_not_empty</code></td><td>Hash SHA-256 de l'URL manquant</td></tr>
+      <tr><td><code>url_unique</code></td><td>URL déjà vue dans la même exécution (doublon)</td></tr>
+    </tbody>
+  </table>
+
+  <h2>7.3 Modèle de données — Entrepôt en étoile</h2>
+  <div class="arch-diagram no-break">
+    <table style="width:100%;font-size:9pt;">
+      <thead><tr>
+        <th style="background:#0f172a;">dim_source</th>
+        <th style="background:#1e40af;">dim_date</th>
+        <th style="background:#dc2626;">fact_articles (centre)</th>
+        <th style="background:#047857;">fact_keyword_frequency</th>
+        <th style="background:#7c3aed;">fact_daily_trends</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td>source_key (PK)<br>source_name<br>country_code<br>source_type<br>language_hint</td>
+          <td>date_key (PK)<br>full_date<br>year/month/day<br>day_name<br>is_weekend</td>
+          <td>article_key (PK)<br>url_hash (UNIQUE)<br>source_key (FK)<br>published_date_key (FK)<br>title, content_text<br>language_code<br>sentiment_score<br>topic_tags</td>
+          <td>date_key (FK)<br>source_key (FK)<br>keyword<br>frequency_count<br>tf_idf_score<br>rank_position</td>
+          <td>date_key (FK)<br>source_key (FK)<br>topic<br>article_count<br>trend_score<br>top_keywords[]</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ 8. LIVRABLES ═══════════════════════════════════ -->
+<div class="section page-break" id="livrables">
+  <h1>8. Récapitulatif des Livrables</h1>
+
+  <ul class="check-list">
+    <li>
+      <span class="check">✅</span>
+      <div>
+        <strong>Présentation détaillée du projet</strong><br>
+        <span style="color:var(--gray);font-size:9.5pt;">Ce document couvre le contexte, l'architecture, les choix technologiques et la démonstration fonctionnelle.</span>
+      </div>
+    </li>
+    <li>
+      <span class="check">✅</span>
+      <div>
+        <strong>Schéma d'architecture</strong><br>
+        <span style="color:var(--gray);font-size:9.5pt;">Diagramme complet en Section 2 : couches d'ingestion, streaming, data lake (Bronze/Silver/Gold), warehouse et visualisation.</span>
+      </div>
+    </li>
+    <li>
+      <span class="check">✅</span>
+      <div>
+        <strong>Code source versionné sur Git</strong><br>
+        <span style="color:var(--gray);font-size:9.5pt;">
+          Dépôt : <strong>https://github.com/ayoublafdaigui/architecture-project</strong><br>
+          59 fichiers — scrapers, modèles, pipelines, DAGs Airflow, tests, SQL, config Docker.
+        </span>
+      </div>
+    </li>
+    <li>
+      <span class="check">✅</span>
+      <div>
+        <strong>Fichiers de déploiement Docker</strong><br>
+        <span style="color:var(--gray);font-size:9.5pt;"><code>mediapulse/docker-compose.yml</code> · <code>mediapulse/Dockerfile</code> · <code>mediapulse/Dockerfile.airflow</code> — 18 services containerisés.</span>
+      </div>
+    </li>
+    <li>
+      <span class="check">✅</span>
+      <div>
+        <strong>Documentation technique d'installation et d'utilisation</strong><br>
+        <span style="color:var(--gray);font-size:9.5pt;">Section 5 de ce document + <code>mediapulse/README.md</code> avec toutes les commandes CLI, URLs de services et instructions étape par étape.</span>
+      </div>
+    </li>
+    <li>
+      <span class="check">✅</span>
+      <div>
+        <strong>Dashboards de visualisation</strong><br>
+        <span style="color:var(--gray);font-size:9.5pt;">Dashboard Grafana provisionné automatiquement (<code>mediapulse-overview.json</code>). Alertes Prometheus. Interface Metabase pour analytics self-service.</span>
+      </div>
+    </li>
+    <li>
+      <span class="check">✅</span>
+      <div>
+        <strong>Démonstration fonctionnelle du pipeline de bout en bout</strong><br>
+        <span style="color:var(--gray);font-size:9.5pt;">Section 7 : scénario A→E depuis le scraping jusqu'aux dashboards. Mode demo seed disponible via <code>docker compose --profile demo up demo-seed</code>.</span>
+      </div>
+    </li>
+  </ul>
+
+  <hr>
+
+  <h2>Stack technologique — Récapitulatif</h2>
+  <div style="margin:16px 0;">
+    <span class="tag blue">Python 3.11</span>
+    <span class="tag blue">Pydantic v2</span>
+    <span class="tag blue">BeautifulSoup4</span>
+    <span class="tag blue">pandas</span>
+    <span class="tag blue">spaCy</span>
+    <span class="tag blue">langdetect</span>
+    <span class="tag orange">Apache Kafka</span>
+    <span class="tag orange">Zookeeper</span>
+    <span class="tag green">MinIO (S3)</span>
+    <span class="tag green">PostgreSQL 16</span>
+    <span class="tag green">Redis</span>
+    <span class="tag purple">Apache Airflow 2.9</span>
+    <span class="tag purple">Celery</span>
+    <span class="tag" style="background:#fce7f3;border-color:#f9a8d4;color:#9d174d;">Grafana 11</span>
+    <span class="tag" style="background:#fce7f3;border-color:#f9a8d4;color:#9d174d;">Prometheus</span>
+    <span class="tag" style="background:#fce7f3;border-color:#f9a8d4;color:#9d174d;">Metabase</span>
+    <span class="tag">Docker Compose</span>
+    <span class="tag">Git</span>
+  </div>
+
+  <div class="info-box" style="margin-top:24px;">
+    <strong>Dépôt GitHub :</strong>
+    <a href="https://github.com/ayoublafdaigui/architecture-project" style="color:var(--primary);">
+      https://github.com/ayoublafdaigui/architecture-project
+    </a><br>
+    <strong>Branche principale :</strong> <code>main</code> — 59 fichiers, 5 812 lignes de code
+  </div>
+</div>
+
+</body>
+</html>
