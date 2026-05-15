@@ -1,0 +1,8 @@
+FROM apache/airflow:2.9.3-python3.11
+
+ENV PYTHONPATH=/opt
+
+COPY requirements.txt /tmp/mediapulse-requirements.txt
+
+USER airflow
+RUN pip install --no-cache-dir -r /tmp/mediapulse-requirements.txt

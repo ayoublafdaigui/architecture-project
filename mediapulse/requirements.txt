@@ -1,0 +1,13 @@
+beautifulsoup4==4.12.3
+kafka-python==2.0.2
+langdetect==1.0.9
+lxml==5.2.2
+minio==7.2.7
+pandas==2.2.2
+psycopg[binary]==3.2.1
+psycopg2-binary==2.9.9
+pydantic==2.8.2
+python-dateutil==2.9.0.post0
+requests==2.32.3
+spacy==3.7.5
+pytest==8.3.2

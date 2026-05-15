@@ -1,0 +1,302 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "mediapulse-postgres"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 12,
+            "lineWidth": 2,
+            "showPoints": "never"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 14,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "mediapulse-postgres"
+          },
+          "format": "time_series",
+          "rawSql": "SELECT published_date::timestamp AS time, source_name AS metric, article_count FROM warehouse.dashboard_articles_per_day ORDER BY published_date;",
+          "refId": "A"
+        }
+      ],
+      "title": "Articles Published Per Day",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "mediapulse-postgres"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 10,
+        "x": 14,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "displayMode": "gradient",
+        "legend": {
+          "showLegend": false
+        },
+        "orientation": "horizontal",
+        "showValue": "always"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "mediapulse-postgres"
+          },
+          "format": "table",
+          "rawSql": "SELECT source_name || ' (' || country_code || ')' AS source, article_count FROM warehouse.dashboard_articles_by_source_country ORDER BY article_count DESC LIMIT 12;",
+          "refId": "A"
+        }
+      ],
+      "title": "Articles By Source And Country",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "mediapulse-postgres"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 8
+      },
+      "id": 3,
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "showValue": "always"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "mediapulse-postgres"
+          },
+          "format": "table",
+          "rawSql": "SELECT keyword, tf_idf_score FROM warehouse.dashboard_top_keywords ORDER BY rank_position LIMIT 20;",
+          "refId": "A"
+        }
+      ],
+      "title": "Top 20 Keywords",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "mediapulse-postgres"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 8,
+        "y": 8
+      },
+      "id": 4,
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "mediapulse-postgres"
+          },
+          "format": "table",
+          "rawSql": "SELECT topic, article_count, trend_score, source_name FROM warehouse.dashboard_trending_topics ORDER BY trend_score DESC LIMIT 20;",
+          "refId": "A"
+        }
+      ],
+      "title": "Trending Topics Last 24h",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "mediapulse-postgres"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 16,
+        "y": 8
+      },
+      "id": 5,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "pieType": "pie",
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "mediapulse-postgres"
+          },
+          "format": "table",
+          "rawSql": "SELECT language_code, article_count FROM warehouse.dashboard_language_distribution;",
+          "refId": "A"
+        }
+      ],
+      "title": "Language Distribution",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "mediapulse-postgres"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 80
+              },
+              {
+                "color": "green",
+                "value": 95
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 20,
+        "y": 8
+      },
+      "id": 6,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": true,
+        "showThresholdMarkers": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "mediapulse-postgres"
+          },
+          "format": "table",
+          "rawSql": "SELECT COALESCE(AVG(quality_score), 100) AS quality_score FROM warehouse.dashboard_quality_score WHERE report_date >= CURRENT_DATE - INTERVAL '7 days';",
+          "refId": "A"
+        }
+      ],
+      "title": "Data Quality Score",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "mediapulse-postgres"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 15
+      },
+      "id": 7,
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "mediapulse-postgres"
+          },
+          "format": "table",
+          "rawSql": "SELECT published_at, source_name, language_code, category_name, title, url FROM warehouse.dashboard_latest_articles LIMIT 50;",
+          "refId": "A"
+        }
+      ],
+      "title": "Latest Articles",
+      "type": "table"
+    }
+  ],
+  "refresh": "5m",
+  "schemaVersion": 39,
+  "tags": [
+    "mediapulse",
+    "news",
+    "warehouse"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-30d",
+    "to": "now"
+  },
+  "timezone": "browser",
+  "title": "MediaPulse News Intelligence",
+  "uid": "mediapulse-overview",
+  "version": 1,
+  "weekStart": ""
+}
