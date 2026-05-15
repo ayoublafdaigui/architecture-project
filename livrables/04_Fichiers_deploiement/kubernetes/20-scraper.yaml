@@ -1,0 +1,78 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mediapulse-scraper
+  namespace: mediapulse
+  labels:
+    app: mediapulse-scraper
+spec:
+  # Toutes les 6 heures
+  schedule: "0 */6 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: mediapulse-scraper
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: scraper
+              image: ghcr.io/ayoublafdaigui/mediapulse-scraper:latest
+              command: ["python", "-m", "mediapulse.ingestion.run_batch_scrape"]
+              envFrom:
+                - configMapRef:
+                    name: mediapulse-config
+                - secretRef:
+                    name: mediapulse-secrets
+              resources:
+                requests:
+                  memory: "256Mi"
+                  cpu: "200m"
+                limits:
+                  memory: "1Gi"
+                  cpu: "500m"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stream-consumer
+  namespace: mediapulse
+  labels:
+    app: stream-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stream-consumer
+  template:
+    metadata:
+      labels:
+        app: stream-consumer
+    spec:
+      containers:
+        - name: stream-consumer
+          image: ghcr.io/ayoublafdaigui/mediapulse-scraper:latest
+          command:
+            - python
+            - -m
+            - mediapulse.ingestion.kafka_consumer
+            - --batch-size
+            - "50"
+          envFrom:
+            - configMapRef:
+                name: mediapulse-config
+            - secretRef:
+                name: mediapulse-secrets
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "300m"
