@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell($basePath = \"C:\\\\Users\\\\ayoub\\\\Downloads\\\\LIVRABLES --- ZAKI RIM -- IKTACHE CHOUAIB -- HAITAM SALAH-EDDINE -- G1 AI & DATA MLY\"; Get-ChildItem -Path $basePath -Recurse -Force | ForEach-Object { $_.FullName.Replace\\($basePath, ''\\) } | Sort-Object)",
+      "PowerShell($basePath = \"C:\\\\Users\\\\ayoub\\\\Downloads\\\\LIVRABLES --- ZAKI RIM -- IKTACHE CHOUAIB -- HAITAM SALAH-EDDINE -- G1 AI & DATA MLY\"; Get-Content \"$basePath\\\\README.md\" -Encoding UTF8)",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\ayoub\\\\Downloads\" | Where-Object { $_.PSIsContainer } | Select-Object Name)",
+      "PowerShell($base = \"C:\\\\Users\\\\ayoub\\\\Downloads\"; $dirs = Get-ChildItem $base -Force | Where-Object { $_.Name -match \"LIVRABLES\" }; if \\($dirs\\) { $dirPath = $dirs[0].FullName; Get-Content \"$dirPath\\\\README.md\" -ErrorAction SilentlyContinue } else { Write-Host \"Dir not found\" })",
+      "PowerShell(Copy-Item \"c:\\\\Users\\\\ayoub\\\\CascadeProjects\\\\scrapingproject\\\\mediapulse\\\\dashboard\\\\grafana\\\\provisioning\\\\dashboards\\\\mediapulse-overview.json\" \"c:\\\\Users\\\\ayoub\\\\CascadeProjects\\\\scrapingproject\\\\livrables\\\\06_Dashboards_visualisation\\\\grafana_dashboards\\\\mediapulse_overview.json\")",
+      "PowerShell(Copy-Item \"c:\\\\Users\\\\ayoub\\\\CascadeProjects\\\\scrapingproject\\\\mediapulse\\\\web\\\\app.py\" \"c:\\\\Users\\\\ayoub\\\\CascadeProjects\\\\scrapingproject\\\\livrables\\\\06_Dashboards_visualisation\\\\flask_dashboard\\\\app.py\")"
+    ]
+  }
+}
